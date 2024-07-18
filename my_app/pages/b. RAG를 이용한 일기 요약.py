@@ -37,7 +37,12 @@ df = df.reset_index(drop=True)
 df.loc[df.title.isna(),'creation_timestamp']= [x.get('creation_timestamp') for x in df.loc[df.title.isna()]['media']]
 df.loc[df.title.isna(),'title']= [x.get('title').encode('latin-1').decode('utf-8') for x in df.loc[df.title.isna()]['media']]
 df["title"] = df.title.map(lambda x: x.replace('ㅅㅂ', '행복해').replace('시발', '사랑해').replace('ㅈ까', '응원해').replace('ㅈ됐다', '잘될거야').replace('해피아워', '좋은 시간').replace('해피 아워', '좋은 시간').replace('오빠', '김땡땡이').replace('유환', '땡땡').replace('스티븐', '탕탕').replace('남친', '인이설이').replace('귀염둥이', '굼바'))
+df['uri'] = df.media.map(lambda x: x['uri'])
 df_index = df.title.map(lambda x: '복지' not in x)
+df = df[df_index]
+df_index = df.title.map(lambda x: '긴장' not in x)
+df = df[df_index]
+df_index = df.title.map(lambda x: '캐이트' not in x)
 df = df[df_index]
 df['dt'] = [datetime.fromtimestamp(x) for x in df['creation_timestamp']]
 df['year'] = df['dt'].map(lambda x: str(x.year))
@@ -64,7 +69,7 @@ ensemble_retriever = EnsembleRetriever(
 
 # prompt = hub.pull("rlm/rag-prompt")
 
-prompt_txt = """당신은 유능한 비서입니다. 유저들의 질문에 검색된 일기장 데이터를 기반으로 대답하세요. 만약 답을 모른다면, 그냥 모른다고 말하십시오. 단계별로 생각하고 답변을 작성해주세요. 
+prompt_txt = """당신은 유능한 비서입니다. 유저들의 질문에 검색된 일기장 데이터를 기반으로 대답하세요. 만약 답을 모른다면, 그냥 모른다고 말하십시오. 김땡땡이나 결혼에 관련된 내용은 답변에 절대로 포함하지 마세요. 단계별로 생각하고 답변을 작성해주세요. 
 Question: {question} 
 Context: {context} 
 Answer:
@@ -90,11 +95,51 @@ rag_chain = (
     | StrOutputParser()
 )
 
+
+st.markdown('# GPT에게 물어보세요 🔍')
+st.markdown('일기를 기반으로 어느 날 무슨 일이 있었는지, 요약해드릴게요!')
+
+
+
 query = st.text_input("알고싶은 내용에 대해서 입력하세요.") 
 
-if query : 
-    # st.text(ensemble_retriever.get_relevant_documents(query))
 
+if query : 
     response = rag_chain.invoke(query)
     llm_response = st.text_area("일기내용", response, label_visibility='hidden', height=200)
+
+    docs = ensemble_retriever.get_relevant_documents(query)
+
+    docs_index = []
+    for i in range(len(docs)):
+        docs_index_tmp = df.title.map(lambda x: docs[i].page_content in x)
+        docs_df=df[docs_index_tmp]
+        docs_index.extend(docs_df.index.to_list())
+
+    data = df.loc[docs_index]
+
+    manuscripts = st.multiselect("일기 선택", data.title.unique(), data.title.unique())
     
+    
+    paths = data.loc[data.title.isin(manuscripts),'uri']
+    paths = [s for s in paths if "jpg" in s] 
+        
+    
+
+    n = st.number_input("Select Grid Width", 5, 10, 6)
+
+    groups = []
+    for i in range(0, len(paths), n):
+        groups.append(paths[i:i+n])
+
+
+    for group in groups:
+        cols = st.columns(n)
+        for i, image in enumerate(group):
+            
+            cols[i].image(f"../instagram_diary/{image}")
+
+    txt = data.loc[data.title.isin(manuscripts),'title'].reset_index(drop=True)[0]
+    diary_txt = st.text_area("일기내용", txt, label_visibility='hidden', height=400)
+
+        
