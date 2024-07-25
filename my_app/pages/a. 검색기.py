@@ -40,16 +40,7 @@ df = df.reset_index(drop=True)
 #  전처리 
 df.loc[df.title.isna(),'creation_timestamp']= [x.get('creation_timestamp') for x in df.loc[df.title.isna()]['media']]
 df.loc[df.title.isna(),'title']= [x.get('title').encode('latin-1').decode('utf-8') for x in df.loc[df.title.isna()]['media']]
-df["title"] = df.title.map(lambda x: x.replace('ㅅㅂ', '행복해').replace('시발', '사랑해').replace('ㅈ까', '응원해').replace('ㅈ됐다', '잘될거야').replace('해피아워', '좋은 시간').replace('해피 아워', '좋은 시간').replace('오빠', '김땡땡이').replace('유환', '땡땡').replace('스티븐', '탕탕').replace('남친', '인이설이').replace('귀염둥이', '굼바'))
 df['uri'] = df.media.map(lambda x: x['uri'])
-df_index = df.title.map(lambda x: '복지' not in x)
-df = df[df_index]
-df_index = df.title.map(lambda x: '긴장' not in x)
-df = df[df_index]
-df_index = df.title.map(lambda x: '캐이트' not in x)
-df = df[df_index]
-df_index = df.uri.map(lambda x: 'jpg'  in x)
-df = df[df_index]
 df['dt'] = [datetime.fromtimestamp(x) for x in df['creation_timestamp']]
 df['year'] = df['dt'].map(lambda x: str(x.year))
 df['month'] = df['dt'].map(lambda x: x.month)
@@ -57,7 +48,6 @@ df['day'] = df['dt'].map(lambda x: x.day)
 df['number'] = df.title.rank(method='dense').astype(int)
 df_nodup = df[["title", 'year', 'month', 'day', 'number']].drop_duplicates(keep='last')
 df_nodup.reset_index(drop=True).head()
-
 
 keyword = st.text_input("검색하고 싶은 키워드를 입력하세요.", '----') 
 year = st.multiselect("기간 선택",
@@ -106,8 +96,9 @@ data = data[['number', 'title', 'year', 'month', 'day']]
 
 
 # 일기 제목 요약 
-prompt_txt = """당신은 유능한 작가입니다. 제공된 일기장 데이터의 제목을 지어주세요. 8글자 이내의 제목을 작성하고, 맥락에 맞는 제목이어야 합니다.
-제목에 땡땡이에 대한 내용은 제외하세요. 제목만을 답변으로 제공하세요. 단계별로 생각하고 답변을 작성해주세요. 
+prompt_txt = """당신은 유능한 작가입니다. 제공된 일기장 데이터의 제목을 지어주세요. 
+8글자 이내의 제목을 작성하고, 맥락에 맞는 제목이어야 합니다.
+제목만을 답변으로 제공하세요. 단계별로 생각하고 답변을 작성해주세요. 
 
 Question: context의 일기의 제목을 지어주세요. 
 Context: 맛잇엇던 아웃백허ㅣ식 가려고할때 없는@칸타카드로 구질구질하게 재결제하러가야해서 웃겻다 파티계시니까 분위기가많이 달라져서 너무 좋다 파 티 조 아
@@ -165,10 +156,6 @@ for group in groups:
 if len(df_tmp.loc[df_tmp.summary.isin(manuscripts),'title'].unique())!=0 :
     txt = df_tmp.loc[df_tmp.summary.isin(manuscripts),'title'].unique()[0]
     diary_txt = st.text_area("일기내용", txt, label_visibility='hidden', height=400)
-
-# try : 
-    
-# except: pass
 
 
 
