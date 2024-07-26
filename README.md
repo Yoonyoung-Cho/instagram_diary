@@ -28,7 +28,7 @@
 ## Demo 
 
 ### 검색
-![image](https://github.com/user-attachments/assets/15cc67a1-83bd-42bf-a605-bf00d6a8aa0b)
+![image](https://github.com/user-attachments/assets/46e32d49-1388-44b0-ab31-bd55ad46318d)
 * 키워드 검색 가능
 * 날짜 설정 가능
 * 키워드가 포함된 일기 조회 가능
