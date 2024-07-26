@@ -1,0 +1,9 @@
+.env
+
+
+# folders 
+instagram_diary
+db
+__pycache__
+GAI_ppt
+Tests
