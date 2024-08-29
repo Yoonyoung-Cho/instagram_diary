@@ -18,10 +18,11 @@
 
 ## 구현 방법
 * 데이터 : 인스타그램 '내 활동'에서 다운로드 가능
-* Streamlit
 * RAG - Ensemble Retriever
+* Milvus
 * LangChain
 * LangSmith
+* Streamlit
 * GPT 3.5 turbo 모델 사용
 
 
