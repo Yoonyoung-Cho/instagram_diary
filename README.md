@@ -28,7 +28,7 @@
 ## Demo 
 
 ### 내 인생의 하이라이트 뽑아 보기
-![image](![스크린샷 2024-08-29 오후 2 58 51](https://github.com/user-attachments/assets/8775e9e2-f39f-4b43-b115-a1142f0006e2))
+![스크린샷 2024-08-29 오후 2 58 51](https://github.com/user-attachments/assets/8775e9e2-f39f-4b43-b115-a1142f0006e2)
 * 주어진 기간의 일기 중 가장 즐거운 일기를 뽑아 요약 
 * Milvus의 metadata를 이용
 
