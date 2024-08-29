@@ -1,6 +1,7 @@
 ## GPT를 이용한 인생의 하이라이트 보기⭐️
 
 `2024.07.25`에 GAI 스터디에서 발표한 인스타그램 일기장 요약 
+`2024.08.22`에 GAI 스터디에서 2차 발표
 
 
 ## 매일 일기 쓰는 나 제법 멋져요 
@@ -26,6 +27,12 @@
 
 
 ## Demo 
+
+### 내 인생의 하이라이트 뽑아 보기
+![image](![스크린샷 2024-08-29 오후 2 58 51](https://github.com/user-attachments/assets/8775e9e2-f39f-4b43-b115-a1142f0006e2))
+* 주어진 기간의 일기 중 가장 즐거운 일기를 뽑아 요약 
+* Milvus의 metadata를 이용
+
 
 ### 검색
 ![image](https://github.com/user-attachments/assets/46e32d49-1388-44b0-ab31-bd55ad46318d)
