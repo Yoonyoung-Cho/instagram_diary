@@ -6,10 +6,7 @@ import streamlit as st
 import glob
 from datetime import datetime
 
-# API 키를 환경변수로 관리하기 위한 설정 파일
 from dotenv import load_dotenv
-
-# API 키 정보 로드
 load_dotenv()
 
 
@@ -54,45 +51,10 @@ year = st.multiselect("기간 선택",
                list(df.year.unique()),
                list(df.year.unique())[0:1],)
 
-# search_click = st.button('검색하기')
-
-# if search_click:
 data = df_nodup.loc[df_nodup.year.isin(year),:]
 data_index = data.title.map(lambda x: keyword in x)
 data = data[data_index]
 data = data[['number', 'title', 'year', 'month', 'day']]
-# st.dataframe(data)
-
-
-# manuscripts = st.multiselect("일기 선택", data.title, data.title)
-# paths = df.loc[df.title.isin(manuscripts),'uri']
-# paths = [s for s in paths if "jpg" in s] 
-
-# n = st.number_input("Select Grid Width", 5, 10, 6)
-
-# groups = []
-# for i in range(0, len(paths), n):
-#     groups.append(paths[i:i+n])
-
-# for group in groups:
-#         cols = st.columns(n)
-#         for i, image in enumerate(group):
-            
-#             cols[i].image(f"../instagram_diary/{image}")
-
-# txt = data.loc[data.title.isin(manuscripts),'title'].reset_index(drop=True)[0]
-# diary_txt = st.text_area("일기내용", txt, label_visibility='hidden', height=400)
-
-# try : 
-#     for group in groups:
-#         cols = st.columns(n)
-#         for i, image in enumerate(group):
-            
-#             cols[i].image(f"../instagram_diary/{image}")
-
-#     txt = data.loc[data.title.isin(manuscripts),'title'].reset_index(drop=True)[0]
-#     diary_txt = st.text_area("일기내용", txt, label_visibility='hidden', height=400)
-# except: pass
 
 
 # 일기 제목 요약 
@@ -118,9 +80,7 @@ prompt=ChatPromptTemplate(input_variables=['context', 'question'],
 llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)
 
 
-
-rag_chain2 = (
-        # {"context": data.title.reset_index(drop=True)[i], "question": RunnablePassthrough()}
+rag_chain = (
         prompt
         | llm
         | StrOutputParser()
@@ -128,7 +88,7 @@ rag_chain2 = (
 
 summary = []
 for i in range(0,len(data.title)):
-    response = rag_chain2.invoke({'context':data.title.reset_index(drop=True)[i], 'question':"일기의 제목을 지어주세요."})
+    response = rag_chain.invoke({'context':data.title.reset_index(drop=True)[i], 'question':"일기의 제목을 지어주세요."})
     summary.append(response)
     
 title_summary = pd.concat([pd.DataFrame(summary, columns=['summary']), data.title.reset_index(drop=True)], axis=1)
